@@ -100,6 +100,7 @@ d. Program tersebut men-generate sebuah program "killer" yang siap di run(execut
 e. Program utama bisa dirun dalam dua mode, yaitu MODE_A dan MODE_B. untuk mengaktifkan MODE_A, program harus dijalankan dengan argumen -a. Untuk MODE_B, program harus dijalankan dengan argumen -b. Ketika dijalankan dalam MODE_A, program utama akan langsung menghentikan semua operasinya ketika program killer dijalankan. Untuk MODE_B, ketika program killer dijalankan, program utama akan berhenti tapi membiarkan proses di setiap folder yang masih berjalan sampai selesai(semua folder terisi gambar, terzip lalu di delete).
 
 ## Soal 3
+source code: [soal3.c](https://github.com/Raferto/SoalShiftSISOP20_modul2_A05/blob/master/soal3/soal3.c)
 ### Penjelasan soal dan penyelesaian
 a. Program buatan jaya harus bisa membuat dua direktori di "/home/[USER]/modul2/". Direktori yang pertama diberi nama "indomie", lalu lima detik kemudian membuat direktori yang kedua bernama "sedaap".
 * dilakukan `fork()`. Child process akan menjalankan 3a.
