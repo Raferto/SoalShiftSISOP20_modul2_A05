@@ -250,12 +250,17 @@ if(child_id == 0){
 		fprintf(f, "}\n");
 		fprintf(f, "else{\n");
 
-		if(argc > 1)
+		if(argc > 1){
 			if(argv[1][1]=='b'){
 				fprintf(f, "char *argv[] = { \"kill\",\"%d\", NULL};\n",sid);
 				fprintf(f, "execv(\"/bin/kill\", argv);\n");
 			}
-		else if{
+			else{
+				fprintf(f, "char *argv[] = { \"pkill\",\"soal2\", NULL};\n");
+				fprintf(f, "execv(\"/usr/bin/pkill\", argv);\n");
+			}
+		}
+		else{
 			fprintf(f, "char *argv[] = { \"pkill\",\"soal2\", NULL};\n");
 			fprintf(f, "execv(\"/usr/bin/pkill\", argv);\n");
 		}
@@ -272,6 +277,7 @@ if(child_id == 0){
 		execv("/bin/rm", argv);	
 	}
 }
+while(1){...
 ```
 
 ## Soal 3
