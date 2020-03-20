@@ -44,89 +44,89 @@ int main(int argc, char** argv){
   	close(STDERR_FILENO);
 
 	if(argc > 1){
-    	if(argv[1][1]=='a'){
-	    	child_id = fork();
-	    	if(child_id == 0){
-			FILE *f;
-			f = fopen ("Killer.c", "w");
-			fprintf(f, "#include<stdio.h>\n");
-			fprintf(f, "#include<stdlib.h>\n");
-			fprintf(f, "#include<sys/types.h>\n");
-			fprintf(f, "#include<sys/stat.h>\n");
-			fprintf(f, "#include<fcntl.h>\n");
-			fprintf(f, "#include<errno.h>\n");
-			fprintf(f, "#include<wait.h>\n");
-			fprintf(f, "#include<unistd.h>\n");
-			fprintf(f, "#include<syslog.h>\n");
-			fprintf(f, "#include<string.h>\n\n");
-			fprintf(f, "int main(){\n");
-			fprintf(f, "int status;\n");
-			fprintf(f, "pid_t child_id = fork();\n");
-			fprintf(f, "if(child_id){\n");
-			fprintf(f, "while ((wait(&status)) > 0);\n");
-			fprintf(f, "char *argv[] = { \"rmv\",\"./Killer\", NULL};\n");
-			fprintf(f, "execv(\"/bin/rm\", argv);\n");
-			fprintf(f, "}\n");
-			fprintf(f, "else{\n");
-			fprintf(f, "char *argv[] = { \"pkill\",\"soal2\", NULL};\n");
-			fprintf(f, "execv(\"/usr/bin/pkill\", argv);\n");
-			fprintf(f, "}\n");
-			fprintf(f, "}\n");
-			fclose(f);
+    		if(argv[1][1]=='a'){
+	    		child_id = fork();
+	    		if(child_id == 0){
+				FILE *f;
+				f = fopen ("Killer.c", "w");
+				fprintf(f, "#include<stdio.h>\n");
+				fprintf(f, "#include<stdlib.h>\n");
+				fprintf(f, "#include<sys/types.h>\n");
+				fprintf(f, "#include<sys/stat.h>\n");
+				fprintf(f, "#include<fcntl.h>\n");
+				fprintf(f, "#include<errno.h>\n");
+				fprintf(f, "#include<wait.h>\n");
+				fprintf(f, "#include<unistd.h>\n");
+				fprintf(f, "#include<syslog.h>\n");
+				fprintf(f, "#include<string.h>\n\n");
+				fprintf(f, "int main(){\n");
+				fprintf(f, "int status;\n");
+				fprintf(f, "pid_t child_id = fork();\n");
+				fprintf(f, "if(child_id){\n");
+				fprintf(f, "while ((wait(&status)) > 0);\n");
+				fprintf(f, "char *argv[] = { \"rmv\",\"./Killer\", NULL};\n");
+				fprintf(f, "execv(\"/bin/rm\", argv);\n");
+				fprintf(f, "}\n");
+				fprintf(f, "else{\n");
+				fprintf(f, "char *argv[] = { \"pkill\",\"soal2\", NULL};\n");
+				fprintf(f, "execv(\"/usr/bin/pkill\", argv);\n");
+				fprintf(f, "}\n");
+				fprintf(f, "}\n");
+				fclose(f);
 
-			char *argv[] = { "gcc","./Killer.c","-o","./Killer", NULL };
-			execv("/usr/bin/gcc", argv);
-	    	}
+				char *argv[] = { "gcc","./Killer.c","-o","./Killer", NULL };
+				execv("/usr/bin/gcc", argv);
+	    		}
 
-	    	while ((wait(&status)) > 0);
-	    	child_id = fork();
-	    	if(child_id == 0){
-	    		char *argv[] = { "rmv","./Killer.c", NULL };
-			execv("/bin/rm", argv);
-	    	}
-	    }
-	    else if(argv[1][1]=='b'){
-	    	child_id = fork();
-	    	if(child_id == 0){
-			FILE *f;
-			f = fopen ("Killer.c", "w");
-			fprintf(f, "#include<stdio.h>\n");
-			fprintf(f, "#include<stdlib.h>\n");
-			fprintf(f, "#include<sys/types.h>\n");
-			fprintf(f, "#include<sys/stat.h>\n");
-			fprintf(f, "#include<fcntl.h>\n");
-			fprintf(f, "#include<errno.h>\n");
-			fprintf(f, "#include<wait.h>\n");
-			fprintf(f, "#include<unistd.h>\n");
-			fprintf(f, "#include<syslog.h>\n");
-			fprintf(f, "#include<string.h>\n\n");
-			fprintf(f, "int main(){\n");
-			fprintf(f, "int status;\n");
-			fprintf(f, "pid_t child_id = fork();\n");
-			fprintf(f, "if(child_id){\n");
-			fprintf(f, "while ((wait(&status)) > 0);\n");
-			fprintf(f, "char *argv[] = { \"rmv\",\"./Killer\", NULL};\n");
-			fprintf(f, "execv(\"/bin/rm\", argv);\n");
-			fprintf(f, "}\n");
-			fprintf(f, "else{\n");
-			fprintf(f, "char *argv[] = { \"kill\",\"%d\", NULL};\n",sid);
-			fprintf(f, "execv(\"/bin/kill\", argv);\n");
-			fprintf(f, "}\n");
-			fprintf(f, "}\n");
-			fclose(f);
+			while ((wait(&status)) > 0);
+			child_id = fork();
+			if(child_id == 0){
+				char *argv[] = { "rmv","./Killer.c", NULL };
+				execv("/bin/rm", argv);
+			}
+		}
+		else if(argv[1][1]=='b'){
+	    		child_id = fork();
+	    		if(child_id == 0){
+				FILE *f;
+				f = fopen ("Killer.c", "w");
+				fprintf(f, "#include<stdio.h>\n");
+				fprintf(f, "#include<stdlib.h>\n");
+				fprintf(f, "#include<sys/types.h>\n");
+				fprintf(f, "#include<sys/stat.h>\n");
+				fprintf(f, "#include<fcntl.h>\n");
+				fprintf(f, "#include<errno.h>\n");
+				fprintf(f, "#include<wait.h>\n");
+				fprintf(f, "#include<unistd.h>\n");
+				fprintf(f, "#include<syslog.h>\n");
+				fprintf(f, "#include<string.h>\n\n");
+				fprintf(f, "int main(){\n");
+				fprintf(f, "int status;\n");
+				fprintf(f, "pid_t child_id = fork();\n");
+				fprintf(f, "if(child_id){\n");
+				fprintf(f, "while ((wait(&status)) > 0);\n");
+				fprintf(f, "char *argv[] = { \"rmv\",\"./Killer\", NULL};\n");
+				fprintf(f, "execv(\"/bin/rm\", argv);\n");
+				fprintf(f, "}\n");
+				fprintf(f, "else{\n");
+				fprintf(f, "char *argv[] = { \"kill\",\"%d\", NULL};\n",sid);
+				fprintf(f, "execv(\"/bin/kill\", argv);\n");
+				fprintf(f, "}\n");
+				fprintf(f, "}\n");
+				fclose(f);
 
-			char *argv[] = { "gcc","./Killer.c","-o","./Killer", NULL };
-			execv("/usr/bin/gcc", argv);
-	    	}
+				char *argv[] = { "gcc","./Killer.c","-o","./Killer", NULL };
+				execv("/usr/bin/gcc", argv);
+			}
 
-	    	while ((wait(&status)) > 0);
-	    	child_id = fork();
-	    	if(child_id == 0){
-	    		char *argv[] = { "rmv","./Killer.c", NULL };
-			execv("/bin/rm", argv);
-	    	}	
-	    }
-    }
+			while ((wait(&status)) > 0);
+			child_id = fork();
+			if(child_id == 0){
+				char *argv[] = { "rmv","./Killer.c", NULL };
+				execv("/bin/rm", argv);
+			}	
+		}
+	}
 
 	while (1){
 		child_id = fork();
