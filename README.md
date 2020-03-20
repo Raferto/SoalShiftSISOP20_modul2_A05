@@ -88,16 +88,191 @@ if(pid==0)
 }
 ```
 ## Soal 2
+source code: [soal2.c](https://github.com/Raferto/SoalShiftSISOP20_modul2_A05/blob/master/soal2/soal2.c)
 ### Penjelasan soal dan penyelesaian
-a. Pertama-tama, dibuat sebuah folder khusus, di dalamnya dibuat sebuah program C yang per 30 detik membuat sebuah folder dengan nama timestamp [YYYY-mm-dd_HH:ii:ss].
+a. Pertama-tama, dibuat sebuah folder khusus, di dalamnya dibuat sebuah program C yang per 30 detik membuat sebuah folder dengan nama timestamp [YYYY-mm-dd_HH:ii:ss]. Untuk membuat folder setiap 30 detik digunakan daemon yang melakukan fork dengan fungsi child membuat folder dengan menggunakan execv. Sedangkan parent di sleep selama 30 detik `sleep(30)` sehingga daemon dijalankan setiap 30 detik sekali. Untuk mengambil timestamp sendiri digunakan fungsi sebagai berikut, perlu diingat bahwa untuk setiap process (sampai seterusnya) dibutuhkan timestamp ini untuk mengetahui nama folder yang di process, sehingga disimpan di variabel date.
+```c++
+while (1){
+	child_id = fork();
+	if(child_id == 0){
+		time(&t);
+		tmp = localtime(&t); 
+		strftime(date, sizeof(date), "%F_%X", tmp);
 
-b. Tiap-tiap folder lalu diisi dengan 20 gambar yang di download dari https://picsum.photos/, dimana tiap gambar di download setiap 5 detik. Tiap gambar berbentuk persegi dengan ukuran (t%1000)+100 piksel dimana t adalah detik Epoch Unix. Gambar tersebut diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss].
+		sprintf(date,"%s/",date);
+	    	char *argv[] = {"mkdir", date, NULL};
+		execv("/bin/mkdir", argv);
+		
+	else{
+		sleep(30);
+	}
+}
+```
+b. Tiap-tiap folder lalu diisi dengan 20 gambar yang di download dari https://picsum.photos/, dimana tiap gambar di download setiap 5 detik. Tiap gambar berbentuk persegi dengan ukuran (t%1000)+100 piksel dimana t adalah detik Epoch Unix. Gambar tersebut diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss]. Untuk mendownload 20 gambar kita perlu melakukan looping sebanyak 20 kali dan kemudian di fork, dengan fungsi child untuk mendownload sebuah gambar yang menggunakan execv dan parent yang di sleep selama 5 detik `sleep(5)` agar loop berlangsung setiap 5 detik. untuk mengambil ukuran piksel sendiri digunakan fungsi sebagai berikut, Karena nama tiap gambar tidak diperlukan maka kita tidak perlu menyimpan nama tiap gambar. Dan karena kita perlu 2.a selesai terlebih dahulu (membuat folder) maka kita menggunakan wait
 
-c. Setelah sebuah folder telah terisi oleh 20 gambar, folder akan di zip dan folder akan di delete(sehingga hanya menyisakan .zip).
+```c++
+while ((wait(&status)) > 0);
+for(i=0;i<20;i++){
+	child_id = fork();
+	if(child_id == 0){
+		epoch = time(NULL);
+		e = (epoch%1000)+100;
+		sprintf(download,"https://picsum.photos/%ld/%ld",e,e);
+		time(&t);
+		tmp = localtime(&t); 
+		strftime(temp, sizeof(temp), "%F_%X", tmp);
 
-d. Program tersebut men-generate sebuah program "killer" yang siap di run(executable) untuk menterminasi semua operasi program tersebut. Setelah di run, program yang menterminasi ini lalu akan mendelete dirinya sendiri.
+		sprintf(simpan,"%s/%s",date,temp);
 
-e. Program utama bisa dirun dalam dua mode, yaitu MODE_A dan MODE_B. untuk mengaktifkan MODE_A, program harus dijalankan dengan argumen -a. Untuk MODE_B, program harus dijalankan dengan argumen -b. Ketika dijalankan dalam MODE_A, program utama akan langsung menghentikan semua operasinya ketika program killer dijalankan. Untuk MODE_B, ketika program killer dijalankan, program utama akan berhenti tapi membiarkan proses di setiap folder yang masih berjalan sampai selesai(semua folder terisi gambar, terzip lalu di delete).
+		char *argv[] = {"wget",download,"-O",simpan, NULL};
+		execv("/usr/bin/wget", argv);
+	}
+	else
+		sleep(5);
+}
+```
+
+c. Setelah sebuah folder telah terisi oleh 20 gambar, folder akan di zip dan folder akan di delete(sehingga hanya menyisakan .zip). Untuk Men-zip folder tentunya kita harus menunggu semua child selesai mendownload sehingga digunakan fungsi wait. Selanjutnya kita perlu melakukan fork lagi dengan fungsi child untuk menzip seluruh folder dengan nama date (nama folder) dan parent untuk menghapus folder dengan nama date. Perlu diingat kita perlu menunggu proses men-zip selesai baru menghapus folder. Untuk melakukannya digunakan fungsi sebagai berikut:
+```c++
+while ((wait(&status)) > 0);
+child_id = fork();
+
+if(child_id == 0){
+	sprintf(temp,"%s.zip",date);
+	char *argv[] = {"zip","-r",temp,date, NULL};
+	execv("/usr/bin/zip", argv);
+}
+
+while ((wait(&status)) > 0);
+char *argv[] = {"rmv","-r",date, NULL};
+execv("/bin/rm", argv);
+```
+
+d. Program tersebut men-generate sebuah program "killer" yang siap di run(executable) untuk menterminasi semua operasi program tersebut. Setelah di run, program yang menterminasi ini lalu akan mendelete dirinya sendiri. Untuk men-generate program killer yang siap di run, kita perlu membuat file c baru yang kemudian di compile dan selanjutnya menghapus file c tersebut sehingga hanya tersisanya program yang siap di run. Untuk melakukan hal tersebut pertama-tama dilakukan fork untuk memisahkan parent sebagai process utama (2.a-2.c) dan process child untuk mengenerate program Killer. Selanjutnya child di fork lagi dengan child membuat file baru "Killer.c" dan parent yang mengcompile "Killer.c" setelah child selesai. Isi "Killer.c" pertama di fork dengan child meng execv pkill nama program utama (soal2) dan parent yang menghapus file "Killer" sendiri. Berikut isi dari "Killer.c"
+:
+```c++
+#include<stdio.h> 
+#include<stdlib.h> 
+#include<sys/types.h> 
+#include<sys/stat.h> 
+#include<fcntl.h> 
+#include<errno.h> 
+#include<wait.h> 
+#include<unistd.h> 
+#include<syslog.h> 
+#include<string.h>
+
+int main(){ 
+	int status; 
+	pid_t child_id = fork(); 
+	if(child_id){ 
+		while ((wait(&status)) > 0); 
+		char *argv[] = { "rmv","./Killer", NULL}; 
+		execv("/bin/rm", argv); 
+	} 
+	else{ 
+		char *argv[] = { "pkill","soal2", NULL}; 
+		execv("/usr/bin/pkill", argv); 
+	} 
+} 
+```
+Perlu diingat program Killer hanya perlu dibuat sekali,Maka fungsi yang digunakan berikut dijalankan diluar `while(1)`.
+```c++
+child_id = fork();
+if(child_id == 0){
+	child_id = fork();
+	if(child_id==0){
+		FILE *f;
+		f = fopen ("Killer.c", "w");
+		fprintf(f, "#include<stdio.h>\n");
+		fprintf(f, "#include<stdlib.h>\n");
+		fprintf(f, "#include<sys/types.h>\n");
+		fprintf(f, "#include<sys/stat.h>\n");
+		fprintf(f, "#include<fcntl.h>\n");
+		fprintf(f, "#include<errno.h>\n");
+		fprintf(f, "#include<wait.h>\n");
+		fprintf(f, "#include<unistd.h>\n");
+		fprintf(f, "#include<syslog.h>\n");
+		fprintf(f, "#include<string.h>\n\n");
+		fprintf(f, "int main(){\n");
+		fprintf(f, "int status;\n");
+		fprintf(f, "pid_t child_id = fork();\n");
+		fprintf(f, "if(child_id){\n");
+		fprintf(f, "while ((wait(&status)) > 0);\n");
+		fprintf(f, "char *argv[] = { \"rmv\",\"./Killer\", NULL};\n");
+		fprintf(f, "execv(\"/bin/rm\", argv);\n");
+		fprintf(f, "}\n");
+		fprintf(f, "else{\n");
+		fprintf(f, "char *argv[] = { \"pkill\",\"soal2\", NULL};\n");
+		fprintf(f, "execv(\"/usr/bin/pkill\", argv);\n");
+		fprintf(f, "}\n");
+		fprintf(f, "}\n");
+		fclose(f);
+
+		char *argv[] = { "gcc","./Killer.c","-o","./Killer", NULL };
+		execv("/usr/bin/gcc", argv);
+	}
+	else{
+		while ((wait(&status)) > 0);
+		char *argv[] = { "rmv","./Killer.c", NULL };
+		execv("/bin/rm", argv);	
+	}
+}
+   
+while(1){...	    
+```
+
+e. Program utama bisa dirun dalam dua mode, yaitu MODE_A dan MODE_B. untuk mengaktifkan MODE_A, program harus dijalankan dengan argumen -a. Untuk MODE_B, program harus dijalankan dengan argumen -b. Ketika dijalankan dalam MODE_A, program utama akan langsung menghentikan semua operasinya ketika program killer dijalankan. Untuk MODE_B, ketika program killer dijalankan, program utama akan berhenti tapi membiarkan proses di setiap folder yang masih berjalan sampai selesai(semua folder terisi gambar, terzip lalu di delete). Untuk melakukan ini pertama kita perlu membuat program menerima argumen lalu  sedikit memodifikasi bagian d, yaitu dengan menambahkan pengecekan -a atau -b pada argumen. apabila -a fungsi seperti bagian d dan apabila -b kita perlu merubahnya sedikit. Bagian yang dirubah adalah adalah pada bagian penulisan di program "Killer.c" dimana yang sebelumnya adalah `pkill soal2` diganti menjadi `kill` dan diikuti sid. Karena Mode_A (-a) sama dengan bagian d maka kita hanya perlu mengecek apabila input yg diterima adalah -b atau bukan. Sehingga menjadi sebagai berikut.
+```c++
+child_id = fork();
+if(child_id == 0){
+	child_id = fork();
+	if(child_id==0){
+		FILE *f;
+		f = fopen ("Killer.c", "w");
+		fprintf(f, "#include<stdio.h>\n");
+		fprintf(f, "#include<stdlib.h>\n");
+		fprintf(f, "#include<sys/types.h>\n");
+		fprintf(f, "#include<sys/stat.h>\n");
+		fprintf(f, "#include<fcntl.h>\n");
+		fprintf(f, "#include<errno.h>\n");
+		fprintf(f, "#include<wait.h>\n");
+		fprintf(f, "#include<unistd.h>\n");
+		fprintf(f, "#include<syslog.h>\n");
+		fprintf(f, "#include<string.h>\n\n");
+		fprintf(f, "int main(){\n");
+		fprintf(f, "int status;\n");
+		fprintf(f, "pid_t child_id = fork();\n");
+		fprintf(f, "if(child_id){\n");
+		fprintf(f, "while ((wait(&status)) > 0);\n");
+		fprintf(f, "char *argv[] = { \"rmv\",\"./Killer\", NULL};\n");
+		fprintf(f, "execv(\"/bin/rm\", argv);\n");
+		fprintf(f, "}\n");
+		fprintf(f, "else{\n");
+
+		if(argc > 1)
+			if(argv[1][1]=='b'){
+				fprintf(f, "char *argv[] = { \"kill\",\"%d\", NULL};\n",sid);
+				fprintf(f, "execv(\"/bin/kill\", argv);\n");
+			}
+		else if{
+			fprintf(f, "char *argv[] = { \"pkill\",\"soal2\", NULL};\n");
+			fprintf(f, "execv(\"/usr/bin/pkill\", argv);\n");
+		}
+		fprintf(f, "}\n");
+		fprintf(f, "}\n");
+		fclose(f);
+
+		char *argv[] = { "gcc","./Killer.c","-o","./Killer", NULL };
+		execv("/usr/bin/gcc", argv);
+	}
+	else{
+		while ((wait(&status)) > 0);
+		char *argv[] = { "rmv","./Killer.c", NULL };
+		execv("/bin/rm", argv);	
+	}
+}
+```
 
 ## Soal 3
 source code: [soal3.c](https://github.com/Raferto/SoalShiftSISOP20_modul2_A05/blob/master/soal3/soal3.c)
