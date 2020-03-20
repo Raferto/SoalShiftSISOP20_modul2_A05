@@ -279,6 +279,16 @@ if(child_id == 0){
 }
 while(1){...
 ```
+Kendala selama mengerjakan soal:
+
+- Kesulitan pada bagian d karena sangat sulit untuk mencari ide bagaimana cara mengerjakannya, sehingga bagian e juga tidak
+  bisa dikerjakan
+
+**Screenshot Hasil**
+![5](https://user-images.githubusercontent.com/57932819/77176966-6740fc80-6af7-11ea-8e8e-e7c55e8a4881.png)
+![6](https://user-images.githubusercontent.com/57932819/77177031-79bb3600-6af7-11ea-8144-b549ed7fae26.png)
+![7](https://user-images.githubusercontent.com/57932819/77177038-7aec6300-6af7-11ea-9ec7-2064cbbc3a18.png)
+![8](https://user-images.githubusercontent.com/57932819/77177042-7c1d9000-6af7-11ea-863c-3484e8e35fee.png)
 
 ## Soal 3
 source code: [soal3.c](https://github.com/Raferto/SoalShiftSISOP20_modul2_A05/blob/master/soal3/soal3.c)
