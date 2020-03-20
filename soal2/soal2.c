@@ -159,7 +159,7 @@ int main(int argc, char** argv){
 						char *argv[] = {"wget",download,"-O",simpan, NULL};
 						execv("/usr/bin/wget", argv);
 					}
-					else;
+					else
 						sleep(5);
 				}
 
