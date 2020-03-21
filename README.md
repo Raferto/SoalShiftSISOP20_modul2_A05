@@ -87,6 +87,13 @@ if(pid==0)
 	execv("/bin/bash", a);
 }
 ```
+* file `file.sh` adalah bash script untuk membuat folder dengan format waktu<br><br>
+**Kendala**
+* Tidak ada kendala selama mengerjakan soal<br><br>
+**Screenshot Hasil**
+![1 1](https://user-images.githubusercontent.com/61036923/77222808-6062ca00-6b89-11ea-9eb5-7df7be1f4d25.png)
+![1 2](https://user-images.githubusercontent.com/61036923/77222810-6193f700-6b89-11ea-9546-4e9866d82892.png)
+
 ## Soal 2
 source code: [soal2.c](https://github.com/Raferto/SoalShiftSISOP20_modul2_A05/blob/master/soal2/soal2.c)
 ### Penjelasan soal dan penyelesaian
@@ -391,8 +398,14 @@ else
 * dilakukan `fork()` pada `pid5`, child process akan membuat file "coba1.txt" dan parent akan membuat file "coba2.txt"
 * `char coba1[1000]` dan `char coba2[1000]` digunakan untuk menyimpan path dari file "coba1.txt" dan "coba2.txt"
 * `cb1 = fopen(coba1, "w")` dan `cb2 = fopen(coba2, "w")` digunakan untuk membuat file "coba1.txt" dan "coba2.txt" kosong
-* `sleep(3)` digunakan agar file "coba2.txt" dibuat 3 detik setelah file "coba1.txt" dibuat
-
+* `sleep(3)` digunakan agar file "coba2.txt" dibuat 3 detik setelah file "coba1.txt" dibuat<br><br>
+**Kendala**
+* Tidak ada kendala selama mengerjakan soal<br><br>
+**Screenshot Hasil**<br>
+![3 1](https://user-images.githubusercontent.com/61036923/77222874-dbc47b80-6b89-11ea-82c1-3c4c31144930.png)
+![3 2](https://user-images.githubusercontent.com/61036923/77222868-d404d700-6b89-11ea-8f7d-ef42a4d386eb.png)
+![3 3](https://user-images.githubusercontent.com/61036923/77222871-d7985e00-6b89-11ea-9f31-63e54e5842a9.png)
+![3 4](https://user-images.githubusercontent.com/61036923/77222873-d830f480-6b89-11ea-83d6-70d37fca5814.png)
 
 
 
